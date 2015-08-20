@@ -347,6 +347,8 @@
 (smartparens-global-mode 1)
 (show-smartparens-global-mode 1)
 
+(global-set-key (kbd "C-M-f") 'sp-end-of-sexp)
+(global-set-key (kbd "C-M-b") 'sp-beginning-of-previous-sexp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
