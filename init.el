@@ -313,7 +313,7 @@
 ;;;;;;;;;;;;;;;;;;; coffee-mode shortcut
 (global-set-key (kbd "C->")  'coffee-indent-shift-left)
 (global-set-key (kbd "C-<")  'coffee-indent-shift-right)
-
+(setq js-indent-level 2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
