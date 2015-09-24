@@ -116,7 +116,7 @@
 ;;;;;;;;;;;;;;;;; AGGRESIVE-INDENT ;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(global-aggressive-indent-mode 1)
+;; (global-aggressive-indent-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -330,6 +330,7 @@
 (global-set-key (kbd "C-<")  'coffee-indent-shift-right)
 (setq js-indent-level 2)
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;; GLSL MODE ;;;;;;;;;;;;;;;;;;;;;
@@ -341,20 +342,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; MULTI WEB MODE ;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; WEB MODE ;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; multi mode for web
-(setq mweb-default-major-mode 'html-mode)
-(setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
-                  (glsl-mode "<script +\\(type=\"x-shader/x-vertex\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
-                  (glsl-mode "<script +\\(type=\"x-shader/x-fragment\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
-                  (js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
-                  (js-mode "<script>" "</script>")
-                  (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
-(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
-(multi-web-global-mode 1)
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 
+(setq-default web-mode-markup-indent-offset tab-width)
+(setq-default web-mode-css-indent-offset tab-width)
+(setq-default web-mode-code-indent-offset tab-width)
+(setq-default web-mode-sql-indent-offset tab-width)
+(setq-default web-mode-code-indent-offset tab-width)
 
 ;; default config
 (require 'smartparens-config)
@@ -364,6 +369,51 @@
 
 (global-set-key (kbd "C-M-f") 'sp-end-of-sexp)
 (global-set-key (kbd "C-M-b") 'sp-beginning-of-previous-sexp)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; PYTHON CONF ;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun python-add-breakpoint ()
+  "Add a break point"
+  (interactive)
+  (newline-and-indent)
+  (insert "import ipdb; ipdb.set_trace()")
+  (highlight-lines-matching-regexp "^[ ]*import ipdb; ipdb.set_trace()"))
+
+(global-set-key (kbd "C-c b") 'python-add-breakpoint)
+;; (eval-after-load 'python-mode
+;;   '(define-key (kbd "C-c b") 'python-add-breakpoint))
+
+(defun python-interactive ()
+  "Enter the interactive Python environment"
+  (interactive)
+  (progn
+    (insert "!import code; code.interact(local=vars())")
+    (move-end-of-line 1)
+    (comint-send-input)))
+
+ (global-set-key (kbd "C-c i") 'python-interactive)
+;; (eval-after-load 'python-mode
+;;   '(define-key (kbd "C-c i") 'python-interactive))
+
+;; M-x isend-associate
+(setq isend-skip-empty-lines nil)
+(setq isend-strip-empty-lines nil)
+(setq isend-delete-indentation t)
+(setq isend-end-with-empty-line t)
+
+(defadvice isend-send (after advice-run-code-sent activate compile)
+  "Execute whatever sent to the (Python) buffer"
+  (interactive)
+  (let ((old-buf (buffer-name)))
+    (progn
+      (switch-to-buffer isend--command-buffer)
+      (goto-char (point-max))
+      (comint-send-input)
+      (switch-to-buffer old-buf))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -384,8 +434,8 @@
 (global-set-key (kbd "C-c C-c") 'next-error)
 (global-set-key (kbd "C-c g") 'goto-line)
 (global-set-key (kbd "M-l") 'query-replace-regexp)
-(global-set-key (kbd "C-c f") 'sp-forward-sexp)
-(global-set-key (kbd "C-c b") 'sp-backward-sexp)
+;; (global-set-key (kbd "C-c f") 'sp-forward-sexp)
+;; (global-set-key (kbd "C-c b") 'sp-backward-sexp)
 (global-set-key (kbd "C-c k") 'sp-kill-sexp)
 (global-set-key [f6] 'call-last-kbd-macro)
 
