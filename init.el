@@ -7,9 +7,11 @@
   (require 'package)
   (add-to-list
    'package-archives
-   '("melpa" . "http://melpa.org/packages/")
+   '("melpa" . "https://melpa.org/packages/")
    t)
   (package-initialize))
+;; to install all needed packages, type:
+;; M-X package-install-selected-packages
 
 ;; some standard default
 (setq inhibit-startup-message   t)
