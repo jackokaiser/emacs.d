@@ -16,7 +16,7 @@
 ;; some standard default
 (setq inhibit-startup-message   t)
 (setq transient-mark-mode 1)
-(normal-erase-is-backspace-mode 1)
+;; (normal-erase-is-backspace-mode 1)
 (setq column-number-mode t)
 (set-language-environment "UTF-8")
 (add-to-list 'load-path "~/.emacs.d/jacques")
@@ -78,7 +78,7 @@
 (setq indent-line-function 'insert-tab)
 (add-hook 'python-mode-hook
       (lambda ()
-        (setq indent-tabs-mode t)
+        (setq indent-tabs-mode nil)
         (setq tab-width 4)
         (setq python-indent-offset 4)))
 
