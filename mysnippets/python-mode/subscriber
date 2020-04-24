@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: subscriber
+# key: sub
+# group : definitions
+# --
+rospy.Subscriber('${1:topic}', ${2:type}, ${3:callback})

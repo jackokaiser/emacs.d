@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: publisher
+# key: pub
+# group : definitions
+# --
+rospy.Publisher('${1:topic}', ${2:type}, queue_size=${3:size})

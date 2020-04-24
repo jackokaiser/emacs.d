@@ -120,6 +120,19 @@
 
     (global-set-key (kbd "<DEL>") 'backward-delete-whitespace-to-column)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; DISPLAY DASH ;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(let* (
+    (glyph-en-dash (make-glyph-code ?\u002D 'font-lock-keyword-face))
+    (glyph-em-dash (make-glyph-code ?\u002D 'font-lock-function-name-face)) )
+  (when (not buffer-display-table)
+    (setq buffer-display-table (make-display-table)))
+  (aset buffer-display-table 8211 `[,glyph-en-dash ,glyph-en-dash])
+  (aset buffer-display-table 8212 `[,glyph-em-dash ,glyph-em-dash ,glyph-em-dash]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -194,11 +207,14 @@
 ;;;;;;;;;;;;;;;;; YASNIPPET ;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;; Develop in ~/emacs.d/snippets, but also
+;; include snippets that come with yasnippet
+;; Load and initialize yasnippet
 (require 'yasnippet)
-(yas-global-mode 1)
-(defalias 'yas/get-snippet-tables 'yas--get-snippet-tables)
-(defalias 'yas/table-hash 'yas--table-hash)
+(yas/initialize)
+(setq yas/root-directory '("~/.emacs.d/snippets"
+                           "~/.emacs.d/mysnippets"))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -295,6 +311,14 @@
 
 (add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; JAVASCRIPT CONF;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
+(add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+(setq js-indent-level 2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -314,6 +338,10 @@
 ;;;;;;;;;;;;;;;;; PYTHON CONF ;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; enable autopep8 formatting on save
+(require 'py-autopep8)
+;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+
 (require 'virtualenvwrapper)
 ;; (venv-initialize-interactive-shells) ;; if you want interactive shell support
 (venv-initialize-eshell) ;; if you want eshell support
@@ -399,4 +427,9 @@
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-(set-face-attribute 'default nil :family "DejaVu Sans Mono" :height 115)
+;; (set-face-attribute 'default nil :family "DejaVu Sans Mono" :height 115)
+;; (set-face-attribute 'default nil :family "Consolas" :height 105)
+;; (set-face-attribute 'default nil :family "Monofur" :height 120)
+;; (set-face-attribute 'default nil :family "Inconsolata" :height 120)
+;; (set-face-attribute 'default nil :family "Anonymous Pro" :height 105)
+;; (set-frame-font   "Droid Sans Mono-10" nil t)
