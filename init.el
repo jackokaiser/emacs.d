@@ -72,7 +72,6 @@
 ;; remove tabs and display tabs/trailing whitespace
 ;; remove tabs and add 2 whitespace instead
 (setq c-basic-indent 2)
-(setq css-indent-offset 2)
 (setq-default tab-width 2)
 (setq-default indent-tabs-mode nil)
 (setq indent-line-function 'insert-tab)
@@ -169,7 +168,6 @@
 
 ;; some handy hooks for doxymacs
 (require 'doxymacs)
-(add-hook 'js-mode-hook 'doxymacs-mode)
 (add-hook 'c-mode-common-hook 'doxymacs-mode)
 (add-hook 'python-mode-hook 'doxymacs-mode)
 
@@ -226,15 +224,6 @@
 ;; find file at point
 (ffap-bindings)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-(setq inferior-js-mode-hook
-      (lambda ()
-        ;; We like nice colors
-        (ansi-color-for-comint-mode-on)
-        ;; Deal with some prompt nonsense
-        (add-to-list
-         'comint-preoutput-filter-functions
-         (lambda (output)
-           (replace-regexp-in-string "\033\\[[0-9]+[GK]" "" output)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -313,12 +302,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; JAVASCRIPT CONF;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; WEB CONF ;::::::;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'auto-mode-alist '("\\.styl$" . sws-mode))
-(add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
-(setq js-indent-level 2)
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+
+(defun web-mode-init-hook ()
+  "Hooks for Web mode.  Adjust indent."
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq indent-tabs-mode t)
+  (setq create-lockfiles nil) ;; preact watch doesn't like .# files
+  )
+(add-hook 'web-mode-hook  'web-mode-init-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -433,3 +435,4 @@
 ;; (set-face-attribute 'default nil :family "Inconsolata" :height 120)
 ;; (set-face-attribute 'default nil :family "Anonymous Pro" :height 105)
 ;; (set-frame-font   "Droid Sans Mono-10" nil t)
+(set-face-attribute 'default nil :height 110)
