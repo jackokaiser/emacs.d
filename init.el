@@ -344,7 +344,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; enable autopep8 formatting on save
 (require 'py-autopep8)
-;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(setq py-autopep8-options '("--max-line-length=120"))
 
 (require 'virtualenvwrapper)
 ;; (venv-initialize-interactive-shells) ;; if you want interactive shell support
