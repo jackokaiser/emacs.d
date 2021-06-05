@@ -4,18 +4,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (when (>= emacs-major-version 24)
-  (require 'package)
-  (add-to-list
-   'package-archives
-   '("melpa" . "https://melpa.org/packages/")
-   t)
-  (package-initialize))
+	(require 'package)
+	(add-to-list
+	 'package-archives
+	 '("melpa" . "https://melpa.org/packages/")
+	 t)
+	(package-initialize))
 ;; to install all needed packages, type:
 ;; M-X package-install-selected-packages
 
 ;; some standard default
-(setq inhibit-startup-message   t)
-(setq transient-mark-mode 1)
+(setq inhibit-startup-message t)
 ;; (normal-erase-is-backspace-mode 1)
 (setq column-number-mode t)
 (set-language-environment "UTF-8")
@@ -29,7 +28,7 @@
 (setq suggest-key-bindings t)
 (setq vc-follow-symlinks t)
 (load "defuns-config.el")
-(setq x-select-enable-clipboard t)
+(setq select-enable-clipboard t)
 (setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
 ;; Changes all yes/no questions to y/n type
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -40,28 +39,21 @@
 
 ;; global highlight line
 (global-hl-line-mode 1)
-;; small color change
-(set-face-background hl-line-face "gray13")
-;; keep line color
-(set-face-foreground 'highlight nil)
-
-;; indent like emacs 23
-(electric-indent-mode t)
 
 ;; I use version control, don't annoy me with backup files everywhere
 (setq make-backup-files nil)
 (setq auto-save-default nil)
-;; (setq ring-bell-function 'ignore)
 
 ; roslaunch highlighting
 (add-to-list 'auto-mode-alist '("\\.launch$" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.sbatch$" . shell-script-mode))
 
 ;; cmake highlighting
 (setq auto-mode-alist
-      (append
-       '(("CMakeLists\\.txt\\'" . cmake-mode))
-       '(("\\.cmake\\'" . cmake-mode))
-       auto-mode-alist))
+			(append
+			 '(("CMakeLists\\.txt\\'" . cmake-mode))
+			 '(("\\.cmake\\'" . cmake-mode))
+			 auto-mode-alist))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -69,17 +61,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;; TAB WIDTH
-;; remove tabs and display tabs/trailing whitespace
-;; remove tabs and add 2 whitespace instead
-(setq c-basic-indent 2)
 (setq-default tab-width 2)
-(setq-default indent-tabs-mode nil)
-(setq indent-line-function 'insert-tab)
-(add-hook 'python-mode-hook
-      (lambda ()
-        (setq indent-tabs-mode nil)
-        (setq tab-width 4)
-        (setq python-indent-offset 4)))
 
 ;; automatically clean up bad whitespace
 (global-whitespace-mode)
@@ -88,36 +70,44 @@
 (setq show-trailing-whitespace t)
 ;; change the character which means "new line"
 (setq whitespace-display-mappings
-      ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
-      '(
-        (space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-        (newline-mark 10 [182 10]) ; 10 LINE FEED
-        (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
-        ))
-
+			;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+			'(
+				(space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+				(newline-mark 10 [182 10]) ; 10 LINE FEED
+				(tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+				))
 
 ;; DEL Overriding
 ;; easier to indent: backward indent when beginning
 ;; of column and press 'DEL'
 (defun backward-delete-whitespace-to-column ()
-  "delete back to the previous column of whitespace, or just one
-    char if that's not possible. This emulates vim's softtabs
-    feature."
-      (interactive)
-      (if indent-tabs-mode
-          (call-interactively 'backward-delete-char-untabify)
-        ;; let's get to work
-        (let ((movement (% (current-column) tab-width))
-              (p (point)))
-          ;; brain freeze, should be easier to calculate goal
-          (when (= movement 0) (setq movement tab-width))
-          (if (save-excursion
-                (backward-char movement)
-                (string-match "^\\s-+$" (buffer-substring-no-properties (point) p)))
-              (delete-region (- p movement) p)
-            (call-interactively 'backward-delete-char-untabify)))))
+	"delete back to the previous column of whitespace, or just one
+		char if that's not possible. This emulates vim's softtabs
+		feature."
+			(interactive)
+			(if indent-tabs-mode
+					(call-interactively 'backward-delete-char-untabify)
+				;; let's get to work
+				(let ((movement (% (current-column) tab-width))
+							(p (point)))
+					;; brain freeze, should be easier to calculate goal
+					(when (= movement 0) (setq movement tab-width))
+					(if (save-excursion
+								(backward-char movement)
+								(string-match "^\\s-+$" (buffer-substring-no-properties (point) p)))
+							(delete-region (- p movement) p)
+						(call-interactively 'backward-delete-char-untabify)))))
 
-    (global-set-key (kbd "<DEL>") 'backward-delete-whitespace-to-column)
+		(global-set-key (kbd "<DEL>") 'backward-delete-whitespace-to-column)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; FLYCHECK ;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(global-flycheck-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -126,12 +116,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (let* (
-    (glyph-en-dash (make-glyph-code ?\u002D 'font-lock-keyword-face))
-    (glyph-em-dash (make-glyph-code ?\u002D 'font-lock-function-name-face)) )
-  (when (not buffer-display-table)
-    (setq buffer-display-table (make-display-table)))
-  (aset buffer-display-table 8211 `[,glyph-en-dash ,glyph-en-dash])
-  (aset buffer-display-table 8212 `[,glyph-em-dash ,glyph-em-dash ,glyph-em-dash]))
+		(glyph-en-dash (make-glyph-code ?\u002D 'font-lock-keyword-face))
+		(glyph-em-dash (make-glyph-code ?\u002D 'font-lock-function-name-face)) )
+	(when (not buffer-display-table)
+		(setq buffer-display-table (make-display-table)))
+	(aset buffer-display-table 8211 `[,glyph-en-dash ,glyph-en-dash])
+	(aset buffer-display-table 8212 `[,glyph-em-dash ,glyph-em-dash ,glyph-em-dash]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -179,26 +169,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (autoload 'markdown-mode "markdown-mode"
-   "Major mode for editing Markdown files" t)
+	 "Major mode for editing Markdown files" t)
 (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; AUTO-COMPLETE ;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'auto-complete-config)
-(ac-config-default)
-
-; Use dictionaries by default
-(setq-default ac-sources (add-to-list 'ac-sources 'ac-source-dictionary))
-(global-auto-complete-mode t)
-; Start auto-completion after 2 characters of a word
-(setq ac-auto-start 2)
-; case sensitivity is important when finding matches
-(setq ac-ignore-case nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -211,7 +185,7 @@
 (require 'yasnippet)
 (yas/initialize)
 (setq yas/root-directory '("~/.emacs.d/snippets"
-                           "~/.emacs.d/mysnippets"))
+													 "~/.emacs.d/mysnippets"))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -231,7 +205,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; browse kill-ring
-;; (browse-kill-ring-default-keybindings)
 (global-set-key (kbd "M-y")  'browse-kill-ring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -260,45 +233,7 @@
 ;; dired-x increases default dir mode
 (require 'dired-x)
 (add-hook 'dired-load-hook
-          (function (lambda () (load "dired-x"))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; COMPILE ;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; default compile command
-(require 'compile)
-(add-hook 'c-mode-hook
-          (lambda ()
-            (unless (file-exists-p "Makefile")
-              (set (make-local-variable 'compile-command)
-                   ;; emulate make's .c.o implicit pattern rule, but with
-                   ;; different defaults for the CC, CPPFLAGS, and CFLAGS
-                   ;; variables:
-                   ;; $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $<
-                   (let ((file (file-name-nondirectory buffer-file-name)))
-                     (format "%s -c -o %s.o %s %s %s"
-                             (or (getenv "CC") "gcc")
-                             (file-name-sans-extension file)
-                             (or (getenv "CPPFLAGS") "-DDEBUG=9")
-                             (or (getenv "CFLAGS") "-ansi -pedantic -Wall -g")
-                             file))))))
-
-;; remove ansii color junk
-(defun colorize-compilation-buffer ()
-  (toggle-read-only)
-  (ansi-color-apply-on-region (point-min) (point-max))
-  (toggle-read-only))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; MATLAB CONF;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(add-to-list 'auto-mode-alist '("\\.m\\'" . octave-mode))
+					(function (lambda () (load "dired-x"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -314,28 +249,15 @@
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
 
 (defun web-mode-init-hook ()
-  "Hooks for Web mode.  Adjust indent."
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-script-padding 0)
-  ;; (setq indent-tabs-mode t)
-  (setq create-lockfiles nil) ;; preact watch doesn't like .# files
-  )
+	"Hooks for Web mode.  Adjust indent."
+	(setq web-mode-markup-indent-offset 2)
+	(setq web-mode-code-indent-offset 2)
+	(setq web-mode-css-indent-offset 2)
+	(setq web-mode-script-padding 0)
+	;; (setq indent-tabs-mode t)
+	(setq create-lockfiles nil) ;; preact watch doesn't like .# files
+	)
 (add-hook 'web-mode-hook  'web-mode-init-hook)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; SMARTPARENS ;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'smartparens)
-(setq sp-autoescape-string-quote 0)
-(smartparens-global-mode 1)
-(show-smartparens-global-mode 1)
-
-(global-set-key (kbd "C-M-f") 'sp-end-of-next-sexp)
-(global-set-key (kbd "C-M-b") 'sp-beginning-of-previous-sexp)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -347,27 +269,38 @@
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq py-autopep8-options '("--max-line-length=120"))
 
+(with-eval-after-load 'flycheck
+	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
+
+(setq flycheck-pycheckers-max-line-length 120)
+
 (require 'virtualenvwrapper)
 ;; (venv-initialize-interactive-shells) ;; if you want interactive shell support
 (venv-initialize-eshell) ;; if you want eshell support
 (venv-workon "emacs")
 
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
+(eval-after-load "python"
+	'(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
+(add-hook 'jedi-mode-hook 'jedi-direx:setup)
+
 (defun python-add-breakpoint ()
-  "Add a break point"
-  (interactive)
-  (newline-and-indent)
-  (insert "import ipdb; ipdb.set_trace()")
-  (highlight-lines-matching-regexp "^[ ]*import ipdb; ipdb.set_trace()"))
+	"Add a break point"
+	(interactive)
+	(newline-and-indent)
+	(insert "import ipdb; ipdb.set_trace()")
+	(highlight-lines-matching-regexp "^[ ]*import ipdb; ipdb.set_trace()"))
 
 (global-set-key (kbd "C-c b") 'python-add-breakpoint)
 
 (defun python-interactive ()
-  "Enter the interactive Python environment"
-  (interactive)
-  (progn
-    (insert "!import code; code.interact(local=vars())")
-    (move-end-of-line 1)
-    (comint-send-input)))
+	"Enter the interactive Python environment"
+	(interactive)
+	(progn
+		(insert "!import code; code.interact(local=vars())")
+		(move-wend-of-line 1)
+		(comint-send-input)))
 
  (global-set-key (kbd "C-c i") 'python-interactive)
 
@@ -378,23 +311,14 @@
 (setq isend-end-with-empty-line t)
 
 (defadvice isend-send (after advice-run-code-sent activate compile)
-  "Execute whatever sent to the (Python) buffer"
-  (interactive)
-  (let ((old-buf (buffer-name)))
-    (progn
-      (switch-to-buffer isend--command-buffer)
-      (goto-char (point-max))
-      (comint-send-input)
-      (switch-to-buffer old-buf))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; IRONY C++ AC ;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(eval-after-load 'company
-  '(add-to-list 'company-backends '(company-irony-c-headers company-irony)))
+	"Execute whatever sent to the (Python) buffer"
+	(interactive)
+	(let ((old-buf (buffer-name)))
+		(progn
+			(switch-to-buffer isend--command-buffer)
+			(goto-char (point-max))
+			(comint-send-input)
+			(switch-to-buffer old-buf))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -431,11 +355,3 @@
 
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-
-;; (set-face-attribute 'default nil :family "DejaVu Sans Mono" :height 115)
-;; (set-face-attribute 'default nil :family "Consolas" :height 105)
-;; (set-face-attribute 'default nil :family "Monofur" :height 120)
-;; (set-face-attribute 'default nil :family "Inconsolata" :height 120)
-;; (set-face-attribute 'default nil :family "Anonymous Pro" :height 105)
-;; (set-frame-font   "Droid Sans Mono-10" nil t)
-(set-face-attribute 'default nil :height 110)
