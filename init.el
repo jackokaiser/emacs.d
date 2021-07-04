@@ -183,21 +183,10 @@
 ;; include snippets that come with yasnippet
 ;; Load and initialize yasnippet
 (require 'yasnippet)
-(yas/initialize)
-(setq yas/root-directory '("~/.emacs.d/snippets"
-													 "~/.emacs.d/mysnippets"))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; DEPENDENCIES ;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; common lisp function for emacs lisp
-(require 'cl)
-;; find file at point
-(ffap-bindings)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(setq yas-snippet-dirs
+			'("~/.emacs.d/snippets"                 ;; personal snippets
+				))
+(yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
