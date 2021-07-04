@@ -274,15 +274,6 @@
 	'(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
 (add-hook 'jedi-mode-hook 'jedi-direx:setup)
 
-(defun python-add-breakpoint ()
-	"Add a break point"
-	(interactive)
-	(newline-and-indent)
-	(insert "import ipdb; ipdb.set_trace()")
-	(highlight-lines-matching-regexp "^[ ]*import ipdb; ipdb.set_trace()"))
-
-(global-set-key (kbd "C-c b") 'python-add-breakpoint)
-
 (defun python-interactive ()
 	"Enter the interactive Python environment"
 	(interactive)
@@ -330,11 +321,6 @@
 (global-set-key (kbd "C-c k") 'sp-kill-sexp)
 (global-set-key [f6] 'call-last-kbd-macro)
 
-;;;;;;; from startup class
-(fset 'align-equals "\C-[xalign-regex\C-m=\C-m")
-(global-set-key "\M-=" 'align-equals)
-;; (global-set-key "\C-x\C-m" 'execute-extended-command)
-(global-set-key "\C-c;" 'comment-or-uncomment-region)
 (global-set-key "\M-n" 'next5)
 (global-set-key "\M-p" 'prev5)
 (global-set-key "\M-o" 'other-window)
