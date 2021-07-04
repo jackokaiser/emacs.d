@@ -46,7 +46,6 @@
 
 ; roslaunch highlighting
 (add-to-list 'auto-mode-alist '("\\.launch$" . xml-mode))
-(add-to-list 'auto-mode-alist '("\\.sbatch$" . shell-script-mode))
 
 ;; cmake highlighting
 (setq auto-mode-alist
