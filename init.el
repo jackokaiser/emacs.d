@@ -62,7 +62,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;; TAB WIDTH
-(setq-default tab-width 2)
+(setq-default tab-width 4)
 
 ;; automatically clean up bad whitespace
 (global-whitespace-mode)
@@ -77,29 +77,6 @@
 				(newline-mark 10 [182 10]) ; 10 LINE FEED
 				(tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
 				))
-
-;; DEL Overriding
-;; easier to indent: backward indent when beginning
-;; of column and press 'DEL'
-(defun backward-delete-whitespace-to-column ()
-	"delete back to the previous column of whitespace, or just one
-		char if that's not possible. This emulates vim's softtabs
-		feature."
-			(interactive)
-			(if indent-tabs-mode
-					(call-interactively 'backward-delete-char-untabify)
-				;; let's get to work
-				(let ((movement (% (current-column) tab-width))
-							(p (point)))
-					;; brain freeze, should be easier to calculate goal
-					(when (= movement 0) (setq movement tab-width))
-					(if (save-excursion
-								(backward-char movement)
-								(string-match "^\\s-+$" (buffer-substring-no-properties (point) p)))
-							(delete-region (- p movement) p)
-						(call-interactively 'backward-delete-char-untabify)))))
-
-		(global-set-key (kbd "<DEL>") 'backward-delete-whitespace-to-column)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

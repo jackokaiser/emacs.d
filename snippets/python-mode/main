@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: main
+# key: main
+# group : definitions
+# expand-env: ((yas-indent-line 'fixed))
+# --
+import os
+import argparse
+
+
+def ${1:main}(save_dir: str):
+    $0
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description='Script to $2')
+    parser.add_argument('--save_dir', help='Directory where the computed data is saved', type=str, required=True)
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    $1(**vars(args))
