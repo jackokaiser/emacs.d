@@ -67,7 +67,7 @@
 ;; automatically clean up bad whitespace
 (global-whitespace-mode)
 (setq whitespace-action '(auto-cleanup))
-(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab face)) ;; only show bad whitespace
+(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab face missing-newline-at-eof)) ;; only show bad whitespace
 (setq show-trailing-whitespace t)
 ;; change the character which means "new line"
 (setq whitespace-display-mappings
@@ -233,10 +233,10 @@
 
 (setq flycheck-pycheckers-max-line-length 120)
 
-(require 'virtualenvwrapper)
-;; (venv-initialize-interactive-shells) ;; if you want interactive shell support
-(venv-initialize-eshell) ;; if you want eshell support
-(venv-workon "emacs")
+(custom-set-variables
+ '(conda-anaconda-home "~/miniconda3/"))
+(require 'conda)
+(conda-env-activate "dsc")
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
