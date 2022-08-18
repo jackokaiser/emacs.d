@@ -85,6 +85,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; list errors in new buffer: C-c ! l
 (global-flycheck-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -205,15 +206,16 @@
 (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.json?$" . web-mode))
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
 
 (defun web-mode-init-hook ()
 	"Hooks for Web mode.  Adjust indent."
-	(setq web-mode-markup-indent-offset 2)
-	(setq web-mode-code-indent-offset 2)
-	(setq web-mode-css-indent-offset 2)
+	(setq web-mode-markup-indent-offset 4)
+	(setq web-mode-code-indent-offset 4)
+	(setq web-mode-css-indent-offset 4)
 	(setq web-mode-script-padding 0)
-	;; (setq indent-tabs-mode t)
+	(setq indent-tabs-mode nil)
 	(setq create-lockfiles nil) ;; preact watch doesn't like .# files
 	)
 (add-hook 'web-mode-hook  'web-mode-init-hook)
@@ -223,26 +225,26 @@
 ;;;;;;;;;;;;;;;;; PYTHON CONF ;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(custom-set-variables
+ '(conda-anaconda-home "~/miniconda3/"))
+(require 'conda)
+(conda-env-activate "dsc")
+
 ;; enable autopep8 formatting on save
 (require 'py-autopep8)
-(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 (setq py-autopep8-options '("--max-line-length=120"))
 
 (with-eval-after-load 'flycheck
 	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
 
 (setq flycheck-pycheckers-max-line-length 120)
-
-(custom-set-variables
- '(conda-anaconda-home "~/miniconda3/"))
-(require 'conda)
-(conda-env-activate "dsc")
-
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
 (eval-after-load "python"
 	'(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
 (add-hook 'jedi-mode-hook 'jedi-direx:setup)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'jedi-mode-hook 'py-autopep8-enable-on-save)
 
 (defun python-interactive ()
 	"Enter the interactive Python environment"
@@ -269,6 +271,29 @@
 			(goto-char (point-max))
 			(comint-send-input)
 			(switch-to-buffer old-buf))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; pretty print xml ;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun bf-pretty-print-xml-region (begin end)
+  "Pretty format XML markup in region. You need to have nxml-mode
+http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+this.  The function inserts linebreaks to separate tags that have
+nothing but whitespace between them.  It then indents the markup
+by using nxml's indentation rules."
+  (interactive "r")
+  (save-excursion
+	(nxml-mode)
+	(goto-char begin)
+	(while (search-forward-regexp "\>[ \\t]*\<" nil t)
+	  (backward-char) (insert "\n") (setq end (1+ end)))
+	(indent-region begin end))
+  (message "Ah, much better!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
