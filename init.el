@@ -1,326 +1,168 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; GLOBAL SETTINGS ;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(when (>= emacs-major-version 24)
-	(require 'package)
-	(add-to-list
-	 'package-archives
-	 '("melpa" . "https://melpa.org/packages/")
-	 t)
-	(package-initialize))
-;; to install all needed packages, type:
-;; M-X package-install-selected-packages
+;;; Personal configuration -*- lexical-binding: t -*-
 
-;; some standard default
-(setq inhibit-startup-message t)
-;; (normal-erase-is-backspace-mode 1)
-(setq column-number-mode t)
-(set-language-environment "UTF-8")
-(add-to-list 'load-path "~/.emacs.d/jacques")
-(setq custom-file "~/.emacs.d/jacques/emacs-custom.el")
-(load custom-file)
+;; Save the contents of this file under ~/.emacs.d/init.el
+;; Do not forget to use Emacs' built-in help system:
+;; Use C-h C-h to get an overview of all help commands.  All you
+;; need to know about Emacs (what commands exist, what functions do,
+;; what variables specify), the help system can provide.
+
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+;; GUI
+(load-theme 'tsdh-dark t)
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
-(setq save-abbrevs nil)
-(setq suggest-key-bindings t)
-(setq vc-follow-symlinks t)
-(load "defuns-config.el")
-(setq select-enable-clipboard t)
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
-;; Changes all yes/no questions to y/n type
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; english by default
-(ispell-change-dictionary "english")
-;; (ispell-change-dictionary "francais")
-
-;; global highlight line
+(global-display-line-numbers-mode t)
 (global-hl-line-mode 1)
 
-;; I use version control, don't annoy me with backup files everywhere
+;; Disable splash screen
+(setq inhibit-startup-screen t)
+(setq read-buffer-completion-ignore-case t
+	  read-file-name-completion-ignore-case t
+	  completion-ignore-case t)
+
+;; Backup files
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
-; roslaunch highlighting
-(add-to-list 'auto-mode-alist '("\\.launch$" . xml-mode))
-
-;; cmake highlighting
-(setq auto-mode-alist
-			(append
-			 '(("CMakeLists\\.txt\\'" . cmake-mode))
-			 '(("\\.cmake\\'" . cmake-mode))
-			 auto-mode-alist))
-
-(setq magit-diff-refine-hunk (quote all))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; WHITESPACE / TABS ;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;; TAB WIDTH
-(setq-default tab-width 4)
-
-;; automatically clean up bad whitespace
-(global-whitespace-mode)
-(setq whitespace-action '(auto-cleanup))
-(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab face missing-newline-at-eof)) ;; only show bad whitespace
-(setq show-trailing-whitespace t)
-;; change the character which means "new line"
-(setq whitespace-display-mappings
-			;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
-			'(
-				(space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-				(newline-mark 10 [182 10]) ; 10 LINE FEED
-				(tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
-				))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; FLYCHECK ;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; list errors in new buffer: C-c ! l
-(global-flycheck-mode 1)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; DISPLAY DASH ;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(let* (
-		(glyph-en-dash (make-glyph-code ?\u002D 'font-lock-keyword-face))
-		(glyph-em-dash (make-glyph-code ?\u002D 'font-lock-function-name-face)) )
-	(when (not buffer-display-table)
-		(setq buffer-display-table (make-display-table)))
-	(aset buffer-display-table 8211 `[,glyph-en-dash ,glyph-en-dash])
-	(aset buffer-display-table 8212 `[,glyph-em-dash ,glyph-em-dash ,glyph-em-dash]))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; THEME ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load-theme 'tsdh-dark)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; BREADCRUMBS ::::;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'load-path "~/.emacs.d/lisp/breadcrumb/")
-(require 'breadcrumb)
-
-;;;;;;; breadcrumb shortcuts
-(global-set-key (kbd "C-c SPC")  'bc-set)  ;; C-c space for set bookmark
-(global-set-key (kbd "C-j") 'bc-previous) ;; M-j for jump to previous
-(global-set-key (kbd "M-j") 'bc-next)  ;; Shift-M-j for jump to next
-(global-set-key (kbd "C-c C-j") 'bc-list)  ;; C-x M-j for the bookmark menu list
-;; (global-set-key [(meta p)]  'bc-local-previous) ;; M-p for local previous
-;; (global-set-key [(meta n)]  'bc-local-next) ;; M-n for local next
-;; (global-set-key [(control c)(j)] 'bc-goto-current) ;; C-c j for jump to current bookmark
-
-;; some handy hooks for doxymacs
-(require 'doxymacs)
-(add-hook 'c-mode-common-hook 'doxymacs-mode)
-(add-hook 'python-mode-hook 'doxymacs-mode)
-
-(require 'google-c-style)
-(add-hook 'c-mode-common-hook 'google-set-c-style)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; MARKDOWN MODE ;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(autoload 'markdown-mode "markdown-mode"
-	 "Major mode for editing Markdown files" t)
-(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; YASNIPPET ;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Develop in ~/emacs.d/snippets, but also
-;; include snippets that come with yasnippet
-;; Load and initialize yasnippet
-(require 'yasnippet)
+;; Snippets
+(unless (package-installed-p 'yasnippet)
+  (package-install 'yasnippet))
 (setq yas-snippet-dirs
-			'("~/.emacs.d/snippets"                 ;; personal snippets
-				))
+	  '("~/.emacs.d/snippets"                 ;; personal snippets
+	))
 (yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; BROWSE KILL RING ;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; browse kill-ring
+;; Automatically pair parentheses
+(electric-pair-mode t)
+
+;; Enable LSP support by default in programming buffers
+(add-hook 'prog-mode-hook #'eglot-ensure)
+
+;; Enabled inline static analysis
+(add-hook 'prog-mode-hook #'flymake-mode)
+
+;; Display messages when idle, without prompting
+(setq help-at-pt-display-when-idle t)
+
+;; Message navigation bindings
+(with-eval-after-load 'flymake
+  (define-key flymake-mode-map (kbd "C-c n") #'flymake-goto-next-error)
+  (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error))
+
+;; Documentation
+(unless (package-installed-p 'eldoc)
+  (package-install 'eldoc))
+
+;; Browse kill ring
+(unless (package-installed-p 'browse-kill-ring)
+  (package-install 'browse-kill-ring))
 (global-set-key (kbd "M-y")  'browse-kill-ring)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; RECENT OPENED FILE ;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; recent opened file
-(recentf-mode 1)
+;; Auto-completion
+(unless (package-installed-p 'company)
+  (package-install 'company))
+(add-hook 'prog-mode-hook #'company-mode)
+
+;;; Git client
+(unless (package-installed-p 'magit)
+  (package-install 'magit))
+(setq vc-follow-symlinks t)
+
+;; Conda
+(unless (package-installed-p 'conda)
+  (package-install 'conda))
+(custom-set-variables
+ '(conda-anaconda-home "~/miniconda3/"))
+(conda-env-activate "dsc")
+
+;; Bind the `magit-status' command to a convenient key.
+(global-set-key (kbd "C-c g") #'magit-status)
+
+;; Show word-granularity differences within diff hunks
+(setq magit-diff-refine-hunk t)
+
+;;; Haskell Support
+(unless (package-installed-p 'haskell-mode)
+  (package-install 'haskell-mode))
+
+;;; JSON Support
+(unless (package-installed-p 'json-mode)
+  (package-install 'json-mode))
+
+;;; YAML Support
+(unless (package-installed-p 'yaml-mode)
+  (package-install 'yaml-mode))
+
+;;; LaTeX support
+(unless (package-installed-p 'auctex)
+  (package-install 'auctex))
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq-default TeX-master nil)
+
+;; Enable LaTeX math support
+(add-hook 'LaTeX-mode-map #'LaTeX-math-mode)
+
+;;; Markdown support
+(unless (package-installed-p 'markdown-mode)
+  (package-install 'markdown-mode))
+
+;; Miscellaneous options
+(setq-default major-mode
+			  (lambda () ; guess major mode from file name
+				(unless buffer-file-name
+				  (let ((buffer-file-name (buffer-name)))
+					(set-auto-mode)))))
+(save-place-mode t)
+(savehist-mode t)
+(recentf-mode t)
 (setq recentf-max-menu-items 80)
 (setq recentf-max-saved-items 80)
 (global-set-key [f4] 'recentf-open-files)
+(defalias 'yes-or-no #'y-or-n-p)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; DISPLAY LINE NUMBER ;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(global-linum-mode)
+;; Store automatic customisation options elsewhere
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; DIRED X ;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; dired-x increases default dir mode
-(require 'dired-x)
-(add-hook 'dired-load-hook
-					(function (lambda () (load "dired-x"))))
+;; Text navigation
+(defun next5()
+  (interactive)
+  (next-line 5))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; WEB CONF ;::::::;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.json?$" . web-mode))
-(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+(defun prev5()
+  (interactive)
+  (previous-line 5))
 
-(defun web-mode-init-hook ()
-	"Hooks for Web mode.  Adjust indent."
-	(setq web-mode-markup-indent-offset 4)
-	(setq web-mode-code-indent-offset 4)
-	(setq web-mode-css-indent-offset 4)
-	(setq web-mode-script-padding 0)
-	(setq indent-tabs-mode nil)
-	(setq create-lockfiles nil) ;; preact watch doesn't like .# files
-	)
-(add-hook 'web-mode-hook  'web-mode-init-hook)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; PYTHON CONF ;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(custom-set-variables
- '(conda-anaconda-home "~/miniconda3/"))
-(require 'conda)
-(conda-env-activate "dsc")
-
-;; enable autopep8 formatting on save
-(require 'py-autopep8)
-(setq py-autopep8-options '("--max-line-length=120"))
-
-(with-eval-after-load 'flycheck
-	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
-
-(setq flycheck-pycheckers-max-line-length 120)
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
-(eval-after-load "python"
-	'(define-key python-mode-map "\C-cx" 'jedi-direx:pop-to-buffer))
-(add-hook 'jedi-mode-hook 'jedi-direx:setup)
-(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-(add-hook 'jedi-mode-hook 'py-autopep8-enable-on-save)
-
-(defun python-interactive ()
-	"Enter the interactive Python environment"
-	(interactive)
-	(progn
-		(insert "!import code; code.interact(local=vars())")
-		(move-wend-of-line 1)
-		(comint-send-input)))
-
- (global-set-key (kbd "C-c i") 'python-interactive)
-
-;; M-x isend-associate
-(setq isend-skip-empty-lines nil)
-(setq isend-strip-empty-lines nil)
-(setq isend-delete-indentation t)
-(setq isend-end-with-empty-line t)
-
-(defadvice isend-send (after advice-run-code-sent activate compile)
-	"Execute whatever sent to the (Python) buffer"
-	(interactive)
-	(let ((old-buf (buffer-name)))
-		(progn
-			(switch-to-buffer isend--command-buffer)
-			(goto-char (point-max))
-			(comint-send-input)
-			(switch-to-buffer old-buf))))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; pretty print xml ;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun bf-pretty-print-xml-region (begin end)
-  "Pretty format XML markup in region. You need to have nxml-mode
-http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
-this.  The function inserts linebreaks to separate tags that have
-nothing but whitespace between them.  It then indents the markup
-by using nxml's indentation rules."
-  (interactive "r")
-  (save-excursion
-	(nxml-mode)
-	(goto-char begin)
-	(while (search-forward-regexp "\>[ \\t]*\<" nil t)
-	  (backward-char) (insert "\n") (setq end (1+ end)))
-	(indent-region begin end))
-  (message "Ah, much better!"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;; SHORTCUT CUSTOM ;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; my shortcuts
-
-(global-set-key (kbd "C-c r") 'replace-string)
-(global-set-key (kbd "C-SPC") 'set-mark-command)
-(global-set-key (kbd "C-c q") 'query-replace)
-(global-set-key (kbd "C-c C-v") 'bury-buffer)
-(global-set-key (kbd "C-c c") 'compile)
-(global-set-key [f5] 'recompile)
-(global-set-key (kbd "C-c s") 'rgrep)
-(global-set-key (kbd "C-c h") 'helm-mini)
-(global-set-key [f1] 'next-error)
-(global-set-key (kbd "C-c g") 'goto-line)
-(global-set-key (kbd "M-l") 'query-replace-regexp)
-(global-set-key (kbd "C-c k") 'sp-kill-sexp)
-(global-set-key [f6] 'call-last-kbd-macro)
-
+(defun back-window ()
+  (interactive)
+  (other-window -1))
 (global-set-key "\M-n" 'next5)
 (global-set-key "\M-p" 'prev5)
 (global-set-key "\M-o" 'other-window)
 (global-set-key "\M-i" 'back-window)
+(global-set-key (kbd "C-c SPC")  'bookmark-set)
+(global-set-key (kbd "C-j") 'bookmark-jump)
+(global-set-key (kbd "M-j") 'bookmark-bmenu-list)
+(global-set-key (kbd "C-c s") 'rgrep)
+(global-set-key [f1] 'next-error)
+(global-set-key (kbd "C-c g") 'goto-line)
+(global-set-key (kbd "C-c k") 'sp-kill-sexp)
+(global-set-key (kbd "C-c C-v") 'bury-buffer)
+
+;; Text editing
+(global-set-key (kbd "C-c r") 'replace-string)
 (global-set-key "\C-z" 'zap-to-char)
+(global-set-key (kbd "C-SPC") 'set-mark-command)
+(global-set-key (kbd "C-c q") 'query-replace)
+(global-set-key (kbd "M-l") 'query-replace-regexp)
+(global-set-key [f6] 'call-last-kbd-macro)
+(global-set-key (kbd "C-c c") 'compile)
+(global-set-key [f5] 'recompile)
 (defalias 'rr 'replace-regexp)
 
 (put 'upcase-region 'disabled nil)
