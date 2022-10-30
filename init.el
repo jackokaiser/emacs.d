@@ -16,12 +16,13 @@
 (scroll-bar-mode -1)
 (global-display-line-numbers-mode t)
 (global-hl-line-mode 1)
+(setq-default show-trailing-whitespace t)
 
 ;; Disable splash screen
 (setq inhibit-startup-screen t)
 (setq read-buffer-completion-ignore-case t
-	  read-file-name-completion-ignore-case t
-	  completion-ignore-case t)
+      read-file-name-completion-ignore-case t
+      completion-ignore-case t)
 
 ;; Backup files
 (setq make-backup-files nil)
@@ -31,7 +32,7 @@
 (unless (package-installed-p 'yasnippet)
   (package-install 'yasnippet))
 (setq yas-snippet-dirs
-	  '("~/.emacs.d/snippets"                 ;; personal snippets
+      '("~/.emacs.d/snippets"                 ;; personal snippets
 	))
 (yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
 
@@ -40,21 +41,27 @@
 
 ;; Enable LSP support by default in programming buffers
 (add-hook 'prog-mode-hook #'eglot-ensure)
+(global-set-key (kbd "C-c a")  'eglot-rename)
 
 ;; Enabled inline static analysis
 (add-hook 'prog-mode-hook #'flymake-mode)
-
-;; Display messages when idle, without prompting
 (setq help-at-pt-display-when-idle t)
-
-;; Message navigation bindings
 (with-eval-after-load 'flymake
   (define-key flymake-mode-map (kbd "C-c n") #'flymake-goto-next-error)
-  (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error))
+  (define-key flymake-mode-map (kbd "C-c p") #'flymake-goto-prev-error)
+  (define-key flymake-mode-map (kbd "C-c l") #'flymake-show-buffer-diagnostics)
+  )
 
 ;; Documentation
 (unless (package-installed-p 'eldoc)
   (package-install 'eldoc))
+
+;; Format code on save
+(unless (package-installed-p 'format-all)
+  (package-install 'format-all))
+(add-hook 'prog-mode-hook 'format-all-mode)
+(add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
+
 
 ;; Browse kill ring
 (unless (package-installed-p 'browse-kill-ring)
@@ -110,12 +117,16 @@
 (unless (package-installed-p 'markdown-mode)
   (package-install 'markdown-mode))
 
+;;; Web support
+(unless (package-installed-p 'web-mode)
+  (package-install 'web-mode))
+
 ;; Miscellaneous options
 (setq-default major-mode
-			  (lambda () ; guess major mode from file name
-				(unless buffer-file-name
-				  (let ((buffer-file-name (buffer-name)))
-					(set-auto-mode)))))
+	      (lambda () ; guess major mode from file name
+		(unless buffer-file-name
+		  (let ((buffer-file-name (buffer-name)))
+		    (set-auto-mode)))))
 (save-place-mode t)
 (savehist-mode t)
 (recentf-mode t)
