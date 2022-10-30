@@ -40,6 +40,8 @@
 (electric-pair-mode t)
 
 ;; Enable LSP support by default in programming buffers
+(unless (package-installed-p 'eglot)
+    (package-install 'eglot))
 (add-hook 'prog-mode-hook #'eglot-ensure)
 (global-set-key (kbd "C-c a")  'eglot-rename)
 

@@ -30,9 +30,11 @@
      ("XML" html-tidy)
      ("YAML" prettier)
      ("_Nginx" nginxfmt)))
- (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  ))
+ '(package-selected-packages
+   '(auctex json-mode eglot yasnippet-snippets yasnippet-classic-snippets yaml-mode web-mode virtualenvwrapper virtualenv typescript-mode pyenv-mode py-yapf py-autopep8 ox-mediawiki markdown-preview-eww markdown-mode magit jedi-direx idle-highlight-mode haskell-mode flycheck-pycheckers dockerfile-mode conda company cmake-mode browse-kill-ring)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
