@@ -17,7 +17,21 @@
 (global-display-line-numbers-mode t)
 (global-hl-line-mode 1)
 (setq column-number-mode t)
-(setq-default show-trailing-whitespace t)
+
+;; Whitespace and tabs cleanup
+(global-whitespace-mode)
+(setq show-trailing-whitespace t)
+(setq whitespace-action '(auto-cleanup))
+(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab face missing-newline-at-eof)) ;; only show bad whitespace
+;; change the character which means "new line"
+(setq whitespace-display-mappings
+      ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+      '(
+	(space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+	(newline-mark 10 [182 10]) ; 10 LINE FEED
+	(tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+	))
+
 
 ;; Disable splash screen
 (setq inhibit-startup-screen t)
