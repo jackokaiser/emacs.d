@@ -98,10 +98,6 @@
 (unless (package-installed-p 'haskell-mode)
   (package-install 'haskell-mode))
 
-;;; JSON Support
-(unless (package-installed-p 'json-mode)
-  (package-install 'json-mode))
-
 ;;; YAML Support
 (unless (package-installed-p 'yaml-mode)
   (package-install 'yaml-mode))
