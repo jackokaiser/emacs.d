@@ -133,6 +133,23 @@
 ;;; Web support
 (unless (package-installed-p 'web-mode)
   (package-install 'web-mode))
+(defun web-mode-init-hook ()
+  "Hooks for Web mode.  Adjust indent."
+  (setq web-mode-markup-indent-offset 4)
+  (setq web-mode-code-indent-offset 4)
+  (setq web-mode-css-indent-offset 4)
+  (setq web-mode-script-padding 0)
+  (setq indent-tabs-mode nil)
+  (setq create-lockfiles nil) ;; preact watch doesn't like .# files
+  )
+(add-hook 'web-mode-hook  'web-mode-init-hook)
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.json?$" . web-mode))
 
 ;; Miscellaneous options
 (setq-default major-mode
