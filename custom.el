@@ -19,8 +19,7 @@
      ("LaTeX" latexindent)
      ("Less" prettier)
      ("Markdown" prettier)
-     ("Python"
-      (yapf "--style={\"based_on_style: pep8, split_before_named_assigns: False, column_limit: 120, dedent_closing_brackets: False, join_multiple_lines: True, indent_width: 4\"}"))
+     ("Python" yapf)
      ("SCSS" prettier)
      ("Shell" shfmt)
      ("Terraform" terraform-fmt)
