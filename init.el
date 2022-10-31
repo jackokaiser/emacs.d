@@ -16,6 +16,7 @@
 (scroll-bar-mode -1)
 (global-display-line-numbers-mode t)
 (global-hl-line-mode 1)
+(setq column-number-mode t)
 (setq-default show-trailing-whitespace t)
 
 ;; Disable splash screen
@@ -41,7 +42,7 @@
 
 ;; Enable LSP support by default in programming buffers
 (unless (package-installed-p 'eglot)
-    (package-install 'eglot))
+  (package-install 'eglot))
 (add-hook 'prog-mode-hook #'eglot-ensure)
 (global-set-key (kbd "C-c a")  'eglot-rename)
 
