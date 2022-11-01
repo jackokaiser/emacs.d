@@ -10,8 +10,6 @@
      ("CMake" cmake-format)
      ("CSS" prettier)
      ("JavaScript" prettier)
-     ("JSON" prettier)
-     ("JSON5" prettier)
      ("Less" prettier)
      ("Markdown" prettier)
      ("Python" yapf)
