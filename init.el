@@ -130,6 +130,10 @@
 (unless (package-installed-p 'markdown-mode)
   (package-install 'markdown-mode))
 
+;;; Docker support
+(unless (package-installed-p 'dockerfile-mode)
+  (package-install 'dockerfile-mode))
+
 ;;; Web support
 (unless (package-installed-p 'web-mode)
   (package-install 'web-mode))
