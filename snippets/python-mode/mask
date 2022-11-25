@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: mask
+# key: mask
+# --
+parser.add_argument('--mask', help='Path to the mask mesh file', type=str, dest='path_to_mask', required=False)

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: preprocessing
+# key: preprocessing
+# --
+parser.add_argument('--preprocessing_meta', help='Path to the preprocessing meta file', type=str,
+                    dest='path_to_preprocessing_meta', required=True)

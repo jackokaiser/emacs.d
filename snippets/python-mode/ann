@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ann
+# key: ann
+# --
+parser.add_argument('--ann_dir', help='Directory that contains the annotations', type=str, required=True)

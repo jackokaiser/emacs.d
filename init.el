@@ -51,9 +51,6 @@
 	))
 (yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
 
-;; Automatically pair parentheses
-(electric-pair-mode t)
-
 ;; Enable LSP support by default in programming buffers
 (unless (package-installed-p 'eglot)
   (package-install 'eglot))
