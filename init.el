@@ -9,6 +9,11 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
+;; Store automatic customisation options elsewhere
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
 ;; GUI
 (load-theme 'tsdh-dark t)
 (menu-bar-mode -1)
@@ -57,6 +62,12 @@
 (add-hook 'python-mode-hook #'eglot-ensure)
 (global-set-key (kbd "C-c a")  'eglot-rename)
 
+;; Enable tree sitter
+(unless (package-installed-p 'tree-sitter-langs)
+  (package-install 'tree-sitter-langs))
+(global-tree-sitter-mode)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
 ;; Enabled inline static analysis
 (add-hook 'prog-mode-hook #'flymake-mode)
 (setq help-at-pt-display-when-idle t)
@@ -75,7 +86,6 @@
   (package-install 'format-all))
 (add-hook 'prog-mode-hook 'format-all-mode)
 (add-hook 'format-all-mode-hook 'format-all-ensure-formatter)
-
 
 ;; Browse kill ring
 (unless (package-installed-p 'browse-kill-ring)
@@ -98,9 +108,6 @@
 (custom-set-variables
  '(conda-anaconda-home "~/miniconda3/"))
 (conda-env-activate "dsc")
-
-;; Bind the `magit-status' command to a convenient key.
-(global-set-key (kbd "C-c g") #'magit-status)
 
 ;; Show word-granularity differences within diff hunks
 (setq magit-diff-refine-hunk t)
@@ -136,9 +143,9 @@
   (package-install 'web-mode))
 (defun web-mode-init-hook ()
   "Hooks for Web mode.  Adjust indent."
-  (setq web-mode-markup-indent-offset 4)
-  (setq web-mode-code-indent-offset 4)
-  (setq web-mode-css-indent-offset 4)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
   (setq web-mode-script-padding 0)
   (setq indent-tabs-mode nil)
   (setq create-lockfiles nil) ;; preact watch doesn't like .# files
@@ -158,6 +165,7 @@
 		(unless buffer-file-name
 		  (let ((buffer-file-name (buffer-name)))
 		    (set-auto-mode)))))
+
 (save-place-mode t)
 (savehist-mode t)
 (recentf-mode t)
@@ -165,11 +173,6 @@
 (setq recentf-max-saved-items 80)
 (global-set-key [f4] 'recentf-open-files)
 (defalias 'yes-or-no #'y-or-n-p)
-
-;; Store automatic customisation options elsewhere
-(setq custom-file (locate-user-emacs-file "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file))
 
 ;; Text navigation
 (defun next5()
@@ -183,6 +186,7 @@
 (defun back-window ()
   (interactive)
   (other-window -1))
+
 (global-set-key "\M-n" 'next5)
 (global-set-key "\M-p" 'prev5)
 (global-set-key "\M-o" 'other-window)
