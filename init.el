@@ -68,6 +68,10 @@
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
+;; Code folding with hideshow
+(global-set-key (kbd "C-=") 'hs-toggle-hiding)
+(add-hook 'prog-mode-hook #'hs-minor-mode)
+
 ;; Enabled inline static analysis
 (add-hook 'prog-mode-hook #'flymake-mode)
 (setq help-at-pt-display-when-idle t)
