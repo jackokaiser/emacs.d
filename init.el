@@ -167,7 +167,16 @@
 (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.json?$" . web-mode))
+
+;; json mode
+(add-to-list 'auto-mode-alist '("\\.json?$" . json-mode))
+(add-hook 'json-mode-hook
+	  (lambda ()
+	    (setq json-mode-indent-level 4)
+	    (defun next5 () (interactive) (next-line 5))
+	    (defun prev5 () (interactive) (previous-line 5))
+	    (local-set-key (kbd "M-n") 'next5)
+	    (local-set-key (kbd "M-p") 'prev5)))
 
 ;; Miscellaneous options
 (setq-default major-mode
