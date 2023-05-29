@@ -61,6 +61,10 @@
   (package-install 'eglot))
 (add-hook 'python-mode-hook #'eglot-ensure)
 (global-set-key (kbd "C-c a")  'eglot-rename)
+(global-set-key (kbd "M-.")  'xref-find-definitions)
+(global-set-key (kbd "M-,")  'xref-go-back)
+(global-set-key (kbd "M-?")  'xref-find-references)
+
 
 ;; Enable tree sitter
 (unless (package-installed-p 'tree-sitter-langs)
@@ -70,6 +74,8 @@
 
 ;; Code folding with hideshow
 (global-set-key (kbd "C-=") 'hs-toggle-hiding)
+(global-set-key (kbd "C-°") 'hs-show-all)
+(global-set-key (kbd "C-)") 'hs-hide-all)
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 
 ;; Enabled inline static analysis
@@ -178,23 +184,10 @@
 (global-set-key [f4] 'recentf-open-files)
 (defalias 'yes-or-no #'y-or-n-p)
 
-;; Text navigation
-(defun next5()
-  (interactive)
-  (next-line 5))
-
-(defun prev5()
-  (interactive)
-  (previous-line 5))
-
-(defun back-window ()
-  (interactive)
-  (other-window -1))
-
-(global-set-key "\M-n" 'next5)
-(global-set-key "\M-p" 'prev5)
+(global-set-key "\M-h" 'mark-paragraph)
+(global-set-key "\M-n" 'forward-paragraph)
+(global-set-key "\M-p" 'backward-paragraph)
 (global-set-key "\M-o" 'other-window)
-(global-set-key "\M-i" 'back-window)
 (global-set-key (kbd "C-c SPC")  'bookmark-set)
 (global-set-key (kbd "C-j") 'bookmark-jump)
 (global-set-key (kbd "M-j") 'bookmark-bmenu-list)
