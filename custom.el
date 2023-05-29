@@ -20,7 +20,7 @@
      ("Vue" prettier)
      ("YAML" prettier)))
  '(package-selected-packages
-   '(tree-sitter-hl tree-sitter-langs tree-sitter company-terraform terraform-mode auctex eglot yasnippet-snippets yasnippet-classic-snippets yaml-mode web-mode virtualenvwrapper virtualenv typescript-mode pyenv-mode py-yapf py-autopep8 ox-mediawiki markdown-preview-eww markdown-mode magit jedi-direx idle-highlight-mode haskell-mode flycheck-pycheckers dockerfile-mode conda company cmake-mode browse-kill-ring)))
+   '(json-mode tree-sitter-hl tree-sitter-langs tree-sitter company-terraform terraform-mode auctex eglot yasnippet-snippets yasnippet-classic-snippets yaml-mode web-mode virtualenvwrapper virtualenv typescript-mode pyenv-mode py-yapf py-autopep8 ox-mediawiki markdown-preview-eww markdown-mode magit jedi-direx idle-highlight-mode haskell-mode flycheck-pycheckers dockerfile-mode conda company cmake-mode browse-kill-ring)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
