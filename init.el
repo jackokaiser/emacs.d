@@ -151,6 +151,7 @@
 ;;; Web support
 (unless (package-installed-p 'web-mode)
   (package-install 'web-mode))
+
 (defun web-mode-init-hook ()
   "Hooks for Web mode.  Adjust indent."
   (setq web-mode-markup-indent-offset 2)
@@ -167,16 +168,31 @@
 (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mjs?$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.cjs?$" . web-mode))
+
+;; terraform mode
+(custom-set-variables '(terraform-indent-level 2))
+(add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
 
 ;; json mode
 (add-to-list 'auto-mode-alist '("\\.json?$" . json-mode))
 (add-hook 'json-mode-hook
 	  (lambda ()
+	    (setq indent-tabs-mode nil)
 	    (setq json-mode-indent-level 4)
 	    (defun next5 () (interactive) (next-line 5))
 	    (defun prev5 () (interactive) (previous-line 5))
 	    (local-set-key (kbd "M-n") 'next5)
 	    (local-set-key (kbd "M-p") 'prev5)))
+
+;; nxml mode
+(defun nxml-mode-init-hook ()
+  "Hooks for Web mode.  Adjust indent."
+  (setq indent-tabs-mode nil)
+  (setq nxml-child-indent 4 nxml-attribute-indent 4)
+  )
+(add-hook 'nxml-mode-hook  'nxml-mode-init-hook)
 
 ;; Miscellaneous options
 (setq-default major-mode
