@@ -173,7 +173,13 @@
 
 ;; terraform mode
 (custom-set-variables '(terraform-indent-level 2))
-(add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
+(defun my-terraform-mode-hook ()
+  ;; Disable whitespace-mode
+  (whitespace-mode -1)
+  ;; Enable terraform-format-on-save-mode
+  (terraform-format-on-save-mode))
+
+(add-hook 'terraform-mode-hook 'my-terraform-mode-hook)
 
 ;; json mode
 (add-to-list 'auto-mode-alist '("\\.json?$" . json-mode))
