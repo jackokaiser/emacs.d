@@ -263,9 +263,59 @@
 (global-set-key "\M-n" 'forward-paragraph)
 (global-set-key "\M-p" 'backward-paragraph)
 (global-set-key "\M-o" 'other-window)
-(global-set-key (kbd "C-c SPC")  'bookmark-set)
-(global-set-key (kbd "C-j") 'bookmark-jump)
-(global-set-key (kbd "M-j") 'bookmark-bmenu-list)
+;; Custom bookmark system: auto-name, cycle newest-first, list by insertion order
+(require 'bookmark)
+(defvar my-bookmark-history '()
+  "Bookmark names in insertion order, newest first.")
+
+(defvar my-bookmark-cycle-index 0
+  "Current index when cycling through `my-bookmark-history'.")
+
+(defun my-bookmark-set ()
+  "Set a bookmark at point with an auto-generated name, no prompt."
+  (interactive)
+  (let ((name (format "bm@%s" (format-time-string "%Y%m%d%H%M%S%3N"))))
+    (bookmark-set name t)
+    (push name my-bookmark-history)
+    (message "Bookmark set at %s:%d"
+	     (or (buffer-file-name) (buffer-name))
+	     (line-number-at-pos))))
+
+(defun my-bookmark-cycle ()
+  "Jump to bookmarks in reverse-insertion order (newest first).
+First press goes to the most recent bookmark; each subsequent
+consecutive press moves one step further back in history."
+  (interactive)
+  (setq my-bookmark-history
+	(seq-filter (lambda (n) (assoc n bookmark-alist))
+		    my-bookmark-history))
+  (if (null my-bookmark-history)
+      (message "No bookmarks.")
+    (unless (eq last-command this-command)
+      (setq my-bookmark-cycle-index 0))
+    (when (>= my-bookmark-cycle-index (length my-bookmark-history))
+      (setq my-bookmark-cycle-index 0))
+    (let ((name (nth my-bookmark-cycle-index my-bookmark-history)))
+      (bookmark-jump name)
+      (message "Bookmark %d/%d" (1+ my-bookmark-cycle-index) (length my-bookmark-history)))
+    (setq my-bookmark-cycle-index
+	  (mod (1+ my-bookmark-cycle-index) (length my-bookmark-history)))))
+
+(defun my-bookmark-list ()
+  "Show bookmarks ordered by insertion date (newest first)."
+  (interactive)
+  (when bookmark-alist
+    (let* ((known (delq nil (mapcar (lambda (n) (assoc n bookmark-alist))
+				    my-bookmark-history)))
+	   (rest  (seq-remove (lambda (b) (member (car b) my-bookmark-history))
+			      bookmark-alist)))
+      (setq bookmark-alist (append known rest))))
+  (let ((bookmark-sort-flag nil))
+    (bookmark-bmenu-list)))
+
+(global-set-key (kbd "C-c SPC") 'my-bookmark-set)
+(global-set-key (kbd "C-j")     'my-bookmark-cycle)
+(global-set-key (kbd "M-j")     'my-bookmark-list)
 (global-set-key (kbd "C-c s") 'rgrep)
 (global-set-key [f1] 'next-error)
 (global-set-key (kbd "C-c g") 'goto-line)

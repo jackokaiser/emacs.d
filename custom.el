@@ -119,9 +119,11 @@
  '(format-all-default-formatters
    '(("C" clang-format) ("C++" clang-format) ("CMake" cmake-format)
      ("CSS" prettier) ("JavaScript" prettier) ("Less" prettier)
-     ("Markdown" prettier) ("Python" yapf) ("SCSS" prettier)
+     ("Markdown" prettier) ("SCSS" prettier)
      ("Shell" shfmt) ("TOML" prettier) ("TypeScript" prettier)
-     ("Vue" prettier) ("YAML" prettier)))
+     ("Vue" prettier) ("YAML" prettier)
+     ("Python" ruff-format)
+     ))
  '(package-selected-packages
    '(browse-kill-ring company conda dockerfile-mode flycheck format-all
 		      haskell-mode lsp-mode lsp-ui magit
