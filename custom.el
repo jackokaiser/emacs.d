@@ -1,3 +1,5 @@
+;;; custom.el --- Custom settings -*- lexical-binding: t; -*-
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -5,7 +7,8 @@
  ;; If there is more than one, they won't work right.
  '(conda-anaconda-home "~/miniconda3/")
  '(connection-local-criteria-alist
-   '(((:application tramp :protocol "kubernetes")
+   '(((:application vc-git) vc-git-connection-default-profile)
+     ((:application tramp :protocol "kubernetes")
       tramp-kubernetes-connection-local-default-profile)
      ((:application eshell) eshell-connection-default-profile)
      ((:application tramp :protocol "flatpak")
@@ -15,7 +18,8 @@
       tramp-connection-local-default-system-profile
       tramp-connection-local-default-shell-profile)))
  '(connection-local-profile-alist
-   '((tramp-flatpak-connection-local-default-profile
+   '((vc-git-connection-default-profile (vc-git--program-version))
+     (tramp-flatpak-connection-local-default-profile
       (tramp-remote-path "/app/bin" tramp-default-remote-path "/bin"
 			 "/usr/bin" "/sbin" "/usr/sbin"
 			 "/usr/local/bin" "/usr/local/sbin"
@@ -119,14 +123,11 @@
      ("Shell" shfmt) ("TOML" prettier) ("TypeScript" prettier)
      ("Vue" prettier) ("YAML" prettier)))
  '(package-selected-packages
-   '(eglot json-mode tree-sitter-hl tree-sitter-langs tree-sitter
-	   company-terraform terraform-mode auctex yasnippet-snippets
-	   yasnippet-classic-snippets yaml-mode web-mode
-	   virtualenvwrapper virtualenv typescript-mode pyenv-mode
-	   py-yapf py-autopep8 ox-mediawiki markdown-preview-eww
-	   markdown-mode magit jedi-direx idle-highlight-mode
-	   haskell-mode flycheck-pycheckers dockerfile-mode conda
-	   company cmake-mode browse-kill-ring))
+   '(browse-kill-ring company conda dockerfile-mode flycheck format-all
+		      haskell-mode lsp-mode lsp-ui magit
+		      markdown-mode prettier-js terraform-mode
+		      tree-sitter-langs web-mode yaml-mode yasnippet))
+ '(terraform-indent-level 2)
  '(warning-suppress-log-types '((comp) (comp))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

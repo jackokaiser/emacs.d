@@ -8,6 +8,7 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(setq native-comp-async-report-warnings-errors nil)
 
 ;; Store automatic customisation options elsewhere
 (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -23,8 +24,14 @@
 (global-hl-line-mode 1)
 (setq column-number-mode t)
 
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode))
+
 ;; Whitespace and tabs cleanup
 (global-whitespace-mode)
+(setq mode-require-final-newline nil)
 (setq show-trailing-whitespace t)
 (setq whitespace-action '(auto-cleanup))
 (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab face missing-newline-at-eof)) ;; only show bad whitespace
@@ -56,27 +63,54 @@
 	))
 (yas-global-mode 1) ;; or M-x yas-reload-all if you've started YASnippet already.
 
-;; Enable LSP support by default in programming buffers
+;; Ensure eglot is installed
 (unless (package-installed-p 'eglot)
   (package-install 'eglot))
-(add-hook 'python-mode-hook #'eglot-ensure)
-(global-set-key (kbd "C-c a")  'eglot-rename)
-(global-set-key (kbd "M-.")  'xref-find-definitions)
-(global-set-key (kbd "M-,")  'xref-go-back)
-(global-set-key (kbd "M-?")  'xref-find-references)
 
+;; Configure eglot
+(use-package eglot
+  :hook (python-mode . eglot-ensure)
+  :config
+  ;; Disable inlay hints and document highlighting
+  (setq eglot-ignored-server-capabilities
+	'(:inlayHintProvider :documentHighlightProvider))
+
+  ;; TypeScript language server for web-mode
+  (add-to-list 'eglot-server-programs
+	       '((web-mode)
+		 . ("typescript-language-server" "--stdio")))
+
+  ;; ty language server for Python
+  (add-to-list 'eglot-server-programs
+	       '((python-mode python-ts-mode)
+		 . ("ty" "server"))))
+
+;; Enable eglot for Python
+(add-hook 'python-mode-hook #'eglot-ensure)
+
+;; Keybindings
+(global-set-key (kbd "C-c a")  'eglot-rename)
+(global-set-key (kbd "M-.")    'xref-find-definitions)
+(global-set-key (kbd "M-,")    'xref-go-back)
+(global-set-key (kbd "M-?")    'xref-find-references)
 
 ;; Enable tree sitter
-(unless (package-installed-p 'tree-sitter-langs)
-  (package-install 'tree-sitter-langs))
-(global-tree-sitter-mode)
-(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+(use-package tree-sitter
+  :ensure t
+  :config
+  (global-tree-sitter-mode))
+
+(use-package tree-sitter-langs
+  :ensure t
+  :after tree-sitter
+  :config
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
 
 ;; Code folding with hideshow
-(global-set-key (kbd "C-=") 'hs-toggle-hiding)
-(global-set-key (kbd "C-°") 'hs-show-all)
-(global-set-key (kbd "C-)") 'hs-hide-all)
-(add-hook 'prog-mode-hook #'hs-minor-mode)
+;; (global-set-key (kbd "C-=") 'hs-toggle-hiding)
+;; (global-set-key (kbd "C-°") 'hs-show-all)
+;; (global-set-key (kbd "C-)") 'hs-hide-all)
+;; (add-hook 'prog-mode-hook #'hs-minor-mode)
 
 ;; Enabled inline static analysis
 (add-hook 'prog-mode-hook #'flymake-mode)
@@ -130,16 +164,6 @@
 (unless (package-installed-p 'yaml-mode)
   (package-install 'yaml-mode))
 
-;;; LaTeX support
-(unless (package-installed-p 'auctex)
-  (package-install 'auctex))
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-(setq-default TeX-master nil)
-
-;; Enable LaTeX math support
-(add-hook 'LaTeX-mode-map #'LaTeX-math-mode)
-
 ;;; Markdown support
 (unless (package-installed-p 'markdown-mode)
   (package-install 'markdown-mode))
@@ -171,6 +195,16 @@
 (add-to-list 'auto-mode-alist '("\\.mjs?$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.cjs?$" . web-mode))
 
+(add-hook 'web-mode-hook (lambda ()
+  (setq indent-tabs-mode nil
+	web-mode-markup-indent-offset 2
+	web-mode-code-indent-offset 2
+	web-mode-css-indent-offset 2)))
+
+(add-hook 'js-mode-hook (lambda ()
+  (setq indent-tabs-mode nil
+	js-indent-level 2)))
+
 ;; terraform mode
 (custom-set-variables '(terraform-indent-level 2))
 (defun my-terraform-mode-hook ()
@@ -179,7 +213,17 @@
   ;; Enable terraform-format-on-save-mode
   (terraform-format-on-save-mode))
 
+(use-package prettier-js
+  :hook ((js-mode . prettier-js-mode)
+	 (web-mode . prettier-js-mode)
+	 ))
+
 (add-hook 'terraform-mode-hook 'my-terraform-mode-hook)
+
+(use-package flycheck
+  :ensure t
+  :config
+  (global-flycheck-mode))
 
 ;; json mode
 (add-to-list 'auto-mode-alist '("\\.json?$" . json-mode))
