@@ -5,3 +5,8 @@ transient
 recentf
 auto-save-list/
 elpa
+tramp
+tree-sitter/
+eln-cache/
+basedpyright.json
+.lsp-session-*

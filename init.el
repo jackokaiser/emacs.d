@@ -55,6 +55,24 @@
 (setq make-backup-files nil)
 (setq auto-save-default nil)
 
+;; System clipboard integration.
+(setq select-enable-clipboard t)
+(use-package xclip
+  :ensure t
+  :config
+  ;; Bridges terminal (-nw) frames to the GUI clipboard (via wl-clipboard,
+  ;; xclip or xsel, auto-detected).
+  (xclip-mode 1)
+  (when (and (eq xclip-method 'wl-copy) (getenv "WAYLAND_DISPLAY"))
+    ;; xclip-mode only intercepts terminal frames; GUI frames use Emacs'
+    ;; native X selection (via XWayland), which this compositor does not
+    ;; bridge to the Wayland clipboard.  Route GUI frames through
+    ;; wl-clipboard too so copy/paste reaches the actual system clipboard.
+    (setq interprogram-cut-function
+          (lambda (text &optional _push) (xclip-set-selection 'clipboard text)))
+    (setq interprogram-paste-function
+          (lambda () (xclip-get-selection 'CLIPBOARD)))))
+
 ;; Snippets
 (unless (package-installed-p 'yasnippet)
   (package-install 'yasnippet))
@@ -87,6 +105,13 @@
 
 ;; Enable eglot for Python
 (add-hook 'python-mode-hook #'eglot-ensure)
+
+;; Activate each repo's own .venv (e.g. created by uv) so eglot/flycheck/
+;; M-x compile all pick up the project-local interpreter and tools
+;; installed under .venv/bin.
+(unless (package-installed-p 'pyvenv-auto)
+  (package-install 'pyvenv-auto))
+(add-hook 'python-mode-hook #'pyvenv-auto-run)
 
 ;; Keybindings
 (global-set-key (kbd "C-c a")  'eglot-rename)
@@ -142,16 +167,17 @@
 (add-hook 'prog-mode-hook #'company-mode)
 
 ;;; Git client
+;; Emacs bundles its own `transient', and `package-installed-p' happily
+;; counts that as "installed" -- so plain (package-installed-p 'transient)
+;; never triggers a real ELPA install, and magit ends up running against
+;; whatever old transient shipped with this Emacs build (error: "Symbol's
+;; function definition is void: transient--set-layout"). Pin a minimum
+;; version so it's forced to fetch a magit-compatible one from MELPA.
+(unless (package-installed-p 'transient '(0 9 0))
+  (package-install 'transient))
 (unless (package-installed-p 'magit)
   (package-install 'magit))
 (setq vc-follow-symlinks t)
-
-;; Conda
-(unless (package-installed-p 'conda)
-  (package-install 'conda))
-(custom-set-variables
- '(conda-anaconda-home "~/miniconda3/"))
-(conda-env-activate "dsc")
 
 ;; Show word-granularity differences within diff hunks
 (setq magit-diff-refine-hunk t)

@@ -5,7 +5,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(conda-anaconda-home "~/miniconda3/")
  '(connection-local-criteria-alist
    '(((:application vc-git) vc-git-connection-default-profile)
      ((:application tramp :protocol "kubernetes")
@@ -119,16 +118,15 @@
  '(format-all-default-formatters
    '(("C" clang-format) ("C++" clang-format) ("CMake" cmake-format)
      ("CSS" prettier) ("JavaScript" prettier) ("Less" prettier)
-     ("Markdown" prettier) ("SCSS" prettier)
-     ("Shell" shfmt) ("TOML" prettier) ("TypeScript" prettier)
-     ("Vue" prettier) ("YAML" prettier)
-     ("Python" ruff-format)
-     ))
+     ("Markdown" prettier) ("SCSS" prettier) ("Shell" shfmt)
+     ("TOML" prettier) ("TypeScript" prettier) ("Vue" prettier)
+     ("YAML" prettier) ("Python" ruff-format)))
  '(package-selected-packages
-   '(browse-kill-ring company conda dockerfile-mode flycheck format-all
-		      haskell-mode lsp-mode lsp-ui magit
-		      markdown-mode prettier-js terraform-mode
-		      tree-sitter-langs web-mode yaml-mode yasnippet))
+   '(browse-kill-ring company dockerfile-mode flycheck format-all
+		      haskell-mode lsp-mode lsp-ui magit markdown-mode
+		      prettier-js pyvenv-auto terraform-mode
+		      tree-sitter-langs web-mode xclip yaml-mode
+		      yasnippet))
  '(terraform-indent-level 2)
  '(warning-suppress-log-types '((comp) (comp))))
 (custom-set-faces
