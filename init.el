@@ -111,6 +111,7 @@
 ;; installed under .venv/bin.
 (unless (package-installed-p 'pyvenv-auto)
   (package-install 'pyvenv-auto))
+(require 'pyvenv-auto)
 (add-hook 'python-mode-hook #'pyvenv-auto-run)
 
 ;; Keybindings
